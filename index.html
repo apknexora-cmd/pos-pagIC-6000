@@ -24,6 +24,8 @@ tailwind.config = {
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<!-- Shared API key injected by the dev/prod container at startup (never committed to git) -->
+<script src="app-config.js"></script>
 
 <style>
   * { scroll-behavior: smooth; }
@@ -386,7 +388,7 @@ tailwind.config = {
     <a href="#services" class="hover:text-purple-400 transition-colors">کاتالوگ خدمات</a>
     <a href="#packages" class="hover:text-purple-400 transition-colors">پکیج‌های ویژه</a>
     <a href="#calculator" class="hover:text-purple-400 transition-colors">محاسبه‌گر پروژه</a>
-    <a href="#contact" class="hover:text-purple-400 transition-colors">ارتباط با ما</a>
+    <a href="#contact-form" class="hover:text-purple-400 transition-colors">ارتباط با ما</a>
   </nav>
 
   <div class="flex items-center space-x-3 space-x-reverse">
@@ -604,6 +606,67 @@ tailwind.config = {
     </div>
   </div>
 </main>
+
+<!-- ==================== DIRECT CONTACT FORM ==================== -->
+<section id="contact-form" class="max-w-4xl mx-auto px-4 py-16 relative z-10">
+  <div class="glass-panel rounded-3xl p-6 sm:p-10 border border-emerald-500/30 glow-emerald">
+    <div class="text-center mb-8">
+      <span class="px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-semibold border border-emerald-500/30">ارتباط مستقیم و بدون واسطه</span>
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-3">درخواست مشاوره مهندسی یا خدمات فین‌تک</h2>
+      <p class="text-gray-400 text-sm mt-2">فرم زیر را پر کنید و پیام‌تان را از طریق واتساپ، تلگرام، ایمیل یا پیامک مستقیماً برای ما بفرستید — پاسخ سریع در همان مسیر.</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+      <div>
+        <label class="block text-xs font-bold text-gray-300 mb-2">نام و نام خانوادگی: <span class="text-rose-400">*</span></label>
+        <input type="text" id="cf-name" placeholder="مثلاً: علی محمدی"
+          class="w-full glass-card bg-gray-900/80 text-white text-sm rounded-xl p-3 border border-white/10 focus:outline-none focus:border-emerald-500 transition-colors">
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-gray-300 mb-2">شماره تماس شما (اختیاری):</label>
+        <input type="tel" id="cf-phone" dir="ltr" placeholder="09xxxxxxxxx"
+          class="w-full glass-card bg-gray-900/80 text-white text-sm rounded-xl p-3 border border-white/10 focus:outline-none focus:border-emerald-500 transition-colors">
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-xs font-bold text-gray-300 mb-2">موضوع درخواست:</label>
+      <select id="cf-type" class="w-full glass-card bg-gray-900/80 text-white text-sm rounded-xl p-3 border border-white/10 focus:outline-none focus:border-emerald-500">
+        <option>مشاوره مهندسی نرم‌افزار</option>
+        <option>خدمات فین‌تک و رمزارز</option>
+        <option>هوش مصنوعی و چت‌بات</option>
+        <option>امنیت سایبری و تست نفوذ</option>
+        <option>طراحی سایت و اپلیکیشن</option>
+        <option>سایر خدمات</option>
+      </select>
+    </div>
+
+    <div class="mb-6">
+      <label class="block text-xs font-bold text-gray-300 mb-2">توضیح پروژه یا سوال: <span class="text-rose-400">*</span></label>
+      <textarea id="cf-message" rows="4" placeholder="به‌طور خلاصه بفرمایید چه نیاز، ایده یا مشکلی دارید..."
+        class="w-full glass-card bg-gray-900/80 text-white text-sm rounded-xl p-3 border border-white/10 focus:outline-none focus:border-emerald-500 resize-y transition-colors"></textarea>
+    </div>
+
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <button onclick="sendContactVia('whatsapp')" class="py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg hover:opacity-90 transition flex items-center justify-center space-x-1 space-x-reverse">
+        <i class="fa-brands fa-whatsapp text-base"></i><span>واتساپ</span>
+      </button>
+      <button onclick="sendContactVia('telegram')" class="py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs shadow-lg hover:opacity-90 transition flex items-center justify-center space-x-1 space-x-reverse">
+        <i class="fa-brands fa-telegram text-base"></i><span>تلگرام</span>
+      </button>
+      <button onclick="sendContactVia('email')" class="py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow-lg hover:opacity-90 transition flex items-center justify-center space-x-1 space-x-reverse">
+        <i class="fa-solid fa-envelope text-base"></i><span>ایمیل</span>
+      </button>
+      <button onclick="sendContactVia('sms')" class="py-3 rounded-xl glass-card hover:bg-gray-700/60 text-gray-200 font-bold text-xs border border-white/10 transition flex items-center justify-center space-x-1 space-x-reverse">
+        <i class="fa-solid fa-comment-sms text-base"></i><span>پیامک</span>
+      </button>
+    </div>
+    <p class="text-[10px] text-gray-500 mt-4 text-center leading-relaxed">
+      <i class="fa-solid fa-lock text-emerald-400 ml-1"></i>
+      اطلاعات این فرم فقط به پیام‌رسان انتخابی شما منتقل می‌شود و در هیچ سروری ذخیره نمی‌گردد.
+    </p>
+  </div>
+</section>
 
 <!-- ==================== CHAT FAB ==================== -->
 <button id="chat-fab" onclick="toggleChat()" class="fixed bottom-6 left-6 z-40 w-16 h-16 rounded-full bg-gradient-to-tr from-purple-600 to-cyan-500 text-white shadow-2xl shadow-purple-600/50 flex items-center justify-center hover:scale-110 transition-transform pulse-ring">
@@ -862,7 +925,9 @@ let cart = [];
 function getApiKey() {
   const stored = localStorage.getItem('nexora_api_key');
   if (stored && stored.trim()) return stored.trim();
-  return GEMINI_API_KEY && GEMINI_API_KEY.trim() ? GEMINI_API_KEY.trim() : "";
+  // کلید مشترک همه کاربران — تزریق شده از app-config.js
+  const shared = window.NEXORA_API_KEY || GEMINI_API_KEY;
+  return shared && shared.trim() ? shared.trim() : "";
 }
 
 function saveApiKey() {
@@ -1395,6 +1460,47 @@ async function sendAiChatMessage() {
     document.getElementById('ai-send-btn').disabled = false;
     input.focus();
   }
+}
+
+/* ==================== DIRECT CONTACT FORM ==================== */
+function buildInquiryText() {
+  const name = document.getElementById('cf-name').value.trim();
+  const phone = document.getElementById('cf-phone').value.trim();
+  const type = document.getElementById('cf-type').value;
+  const msg = document.getElementById('cf-message').value.trim();
+
+  if (!name || !msg) {
+    showNotification('لطفاً نام و توضیح درخواست را تکمیل کنید.', 'warning');
+    return null;
+  }
+
+  let text = `درخواست مشاوره — ${type}\n\n`;
+  text += `نام: ${name}\n`;
+  if (phone) text += `شماره تماس: ${phone}\n`;
+  text += `\nتوضیح:\n${msg}\n\n— ارسال شده از وب‌سایت نکسورا`;
+  return { text, type };
+}
+
+function sendContactVia(channel) {
+  const inquiry = buildInquiryText();
+  if (!inquiry) return;
+
+  if (channel === 'whatsapp') {
+    window.open('https://wa.me/989387876829?text=' + encodeURIComponent(inquiry.text), '_blank');
+  } else if (channel === 'telegram') {
+    navigator.clipboard?.writeText(inquiry.text).catch(() => {});
+    window.open('https://t.me/Nexora_apk', '_blank');
+    showNotification('📋 پیام شما کپی شد — در گفتگوی تلگرام Paste کنید.', 'success');
+    return;
+  } else if (channel === 'email') {
+    window.location.href = 'mailto:apknexora@gmail.com?subject='
+      + encodeURIComponent('درخواست مشاوره — ' + inquiry.type)
+      + '&body=' + encodeURIComponent(inquiry.text);
+  } else if (channel === 'sms') {
+    window.location.href = 'sms:+989387876829?body=' + encodeURIComponent(inquiry.text);
+  }
+
+  showNotification('✅ پیام آماده شد — در پنجره بازشده ارسال را تأیید کنید.', 'success');
 }
 
 /* ==================== NOTIFICATION ==================== */

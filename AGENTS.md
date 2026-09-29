@@ -8,7 +8,8 @@ Single-file static site: the whole app is `index.html` (Persian RTL landing page
 
 ## Gemini chatbot / API key
 - The chatbot calls the Gemini API **from the browser** (`callGeminiAPI` in `index.html`). There is no server-side key handling.
-- The API key is intentionally NOT hardcoded in the repo. Users enter it via the built-in setup modal (auto-opens on first visit), stored in `localStorage` (`nexora_api_key`).
+- A **shared key for all visitors** is injected at container startup: `docker-compose.base44.yml` reads the platform secret file (`/run/base44/app.env`, mounted read-only) and writes `/usr/share/nginx/html/app-config.js` containing `window.NEXORA_API_KEY`. `index.html` loads that script and `getApiKey()` falls back to it — so no setup modal opens for visitors. The key is never committed to the repo.
+- Visitors may still enter their own key via the setup modal (stored in `localStorage` `nexora_api_key`); it takes precedence over the shared key.
 - Model name and endpoint are the `GEMINI_MODEL` / `GEMINI_API_URL` constants in `index.html`. If the chatbot returns "model not found", update `GEMINI_MODEL` to a currently available Gemini model.
 
 ## Editing

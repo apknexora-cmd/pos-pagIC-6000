@@ -7,6 +7,24 @@ services:
     volumes:
       # Serve the cloned source directly — edits to index.html appear on refresh.
       - ./index.html:/usr/share/nginx/html/index.html:ro
+      # Platform-managed secrets file (outside the repo, never committed).
+      - /run/base44/app.env:/run/base44/app.env:ro
+    # Generate app-config.js at startup so the shared Gemini key reaches the
+    # browser without ever being written into the repository.
+    command:
+      - sh
+      - -ec
+      - |
+        key=""
+        if [ -f /run/base44/app.env ]; then
+          key="$$(grep -E '^GEMINI_API_KEY=' /run/base44/app.env | head -n1 | cut -d= -f2-)"
+          if [ -z "$$key" ]; then
+            key="$$(grep -vE '^[[:space:]]*(#|$$)' /run/base44/app.env | head -n1 | tr -d '\r')"
+          fi
+        fi
+        escaped=$$(printf '%s' "$$key" | sed 's/\\/\\\\/g; s/"/\\"/g')
+        printf 'window.NEXORA_API_KEY = "%s";\n' "$$escaped" > /usr/share/nginx/html/app-config.js
+        exec nginx -g 'daemon off;'
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/"]
       interval: 10s
